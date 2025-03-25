@@ -1,0 +1,60 @@
+diff --git a/vlib/v/gen/c/cheaders.v b/vlib/v/gen/c/cheaders.v
+index da700feb2..a992a5e0d 100644
+--- a/vlib/v/gen/c/cheaders.v
++++ b/vlib/v/gen/c/cheaders.v
+@@ -143,6 +143,18 @@ static char __CLOSURE_GET_DATA_BYTES[] = {
+ 	0x03, 0xA5, 0x0F, 0x00,  // lw    a0, 0(t6)
+ 	0x67, 0x80, 0x00, 0x00   // ret
+ };
++#elif defined(__V_s390x)
++static char __closure_thunk[] = {
++	0xC0, 0x50, 0xFF, 0xFF, 0xE0, 0x00,  // larl %r5, 0 <userdata>
++	0xE3, 0x50, 0x50, 0x00, 0x00, 0x04,  // lg   %r5, 0(%r5)
++	0xC0, 0x60, 0xFF, 0xFF, 0xDF, 0xFE,  // larl %r6, 8 <fn>
++	0xE3, 0x60, 0x60, 0x00, 0x00, 0x04,  // lg   %r6, 0(%r6)
++	0x07, 0xF6,			     // br   %r6
++};
++static char __CLOSURE_GET_DATA_BYTES[] = {
++	0xb9, 0x04, 0x00, 0x25,		     // lgr  %r2, %r5
++	0x07, 0xfe,			     // br   %r14
++};
+ #endif
+ 
+ static void*(*__CLOSURE_GET_DATA)(void) = 0;
+@@ -301,6 +313,13 @@ const c_common_macros = '
+ 	#define __V_architecture 6
+ #endif
+ 
++#if defined(__s390x__)
++	#define __V_s390x 1
++	#undef __V_architecture
++	#define __V_architecture 7
++#endif
++
++
+ // Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:
+ #ifdef __GNUC__
+ 	#define __V_GCC__
+@@ -670,7 +689,7 @@ static void* g_live_info = NULL;
+ 
+ const c_builtin_types = '
+ //================================== builtin types ================================*/
+-#if defined(__x86_64__) || defined(_M_AMD64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64) || (defined(__riscv_xlen) && __riscv_xlen == 64)
++#if defined(__x86_64__) || defined(_M_AMD64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64) || (defined(__riscv_xlen) && __riscv_xlen == 64) || defined(__s390x__)
+ typedef int64_t vint_t;
+ #else
+ typedef int32_t vint_t;
+diff --git a/vlib/v/gen/c/comptime.v b/vlib/v/gen/c/comptime.v
+index 040b560e8..4df3ebf9f 100644
+--- a/vlib/v/gen/c/comptime.v
++++ b/vlib/v/gen/c/comptime.v
+@@ -1279,6 +1279,9 @@ fn (mut g Gen) comptime_if_to_ifdef(name string, is_comptime_option bool) !strin
+ 		'rv64', 'riscv64' {
+ 			return '__V_rv64'
+ 		}
++		's390x' {
++			return '__V_s390x'
++		}
+ 		// bitness:
+ 		'x64' {
+ 			return 'TARGET_IS_64BIT'
