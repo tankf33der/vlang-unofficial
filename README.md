@@ -18,11 +18,12 @@ alpine linux s390x:
 12. gcc -std=gnu11 -w -o v1 vc/v.c -lm -lpthread
 13. ./v1 -version -v
 14. no crash? good
-15. ./v1 -no-parallel -o v2 cmd/v
-16. ./v2 -o v cmd/v
-17. rm -rf v1 v2
-18. ./v -version -v
-19. ./v
-20. repl works? good
-21. finish
+15. patch -p1 < s390x.patch
+16. ./v1 -no-parallel -o v2 cmd/v
+17. ./v2 -o v cmd/v
+18. rm -rf v1 v2
+19. ./v -version -v
+20. ./v
+21. repl works? good
+22. finish
 ```
