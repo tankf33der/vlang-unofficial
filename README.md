@@ -4,7 +4,7 @@ Host system:
 1. apply bootstrap patch
 2. recompile vlang
 3. ./v -o /tmp/v.c -cross cmd/v
-4. transfer v.c file to s390x's /tmp
+4. transfer v.c, cheaders.v, comp file to s390x's /tmp
 
 alpine linux s390x:
 5. apk add alpine-sdk gc gc-dev
