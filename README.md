@@ -2,7 +2,7 @@ How to bootstrap vlang (March 2025) on s390x:
 
 ```
 Host system:
-1. apply bootstrap patch
+1. patch -p1 < bootstrap.patch
 2. recompile vlang
 3. ./v -o /tmp/v.c -cross cmd/v
 4. transfer v.c, cheaders.v, comptime.v files to s390x's /tmp
