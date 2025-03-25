@@ -1,15 +1,17 @@
 How to bootstrap vlang (March 2025) on s390x:
 
+```
 Host system:
 1. apply bootstrap patch
 2. recompile vlang
 3. ./v -o /tmp/v.c -cross cmd/v
 4. transfer v.c, cheaders.v, comp file to s390x's /tmp
 5. go to s390x machine
+
+alpine linux s390x:
 6. apk add alpine-sdk gc gc-dev
 7. export VFLAGS='-cc gcc -d dynamic_boehm'
 8. cp /tmp/v.c to vlang's vc/ dir
-
 9. cd to vlang's dir
 10. gcc -std=gnu11 -w -o v1 vc/v.c -lm -lpthread
 11. ./v1 -version -v
@@ -21,3 +23,4 @@ Host system:
 17. ./v
 18. repl works? good
 19. finish
+```
